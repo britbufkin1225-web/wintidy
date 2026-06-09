@@ -1,6 +1,8 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import { Server } from 'node:http';
+import { join } from 'node:path';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
@@ -14,7 +16,7 @@ interface HealthResponse {
 }
 
 describe('WinTidy API (e2e)', () => {
-  let app: INestApplication;
+  let app: NestExpressApplication;
   let server: Server;
 
   beforeAll(async () => {
@@ -22,7 +24,8 @@ describe('WinTidy API (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleFixture.createNestApplication<NestExpressApplication>();
+    app.useStaticAssets(join(process.cwd(), 'public'));
     app.setGlobalPrefix('api/v1');
     app.useGlobalPipes(
       new ValidationPipe({
@@ -32,8 +35,6 @@ describe('WinTidy API (e2e)', () => {
       }),
     );
     await app.init();
-    // Nest's adapter API is typed as any, while Supertest accepts the server.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     server = app.getHttpServer();
   });
 
@@ -53,6 +54,14 @@ describe('WinTidy API (e2e)', () => {
     expect(typeof body.cpu).toBe('object');
     expect(typeof body.memory).toBe('object');
     expect(typeof body.disk).toBe('object');
+  });
+
+  it('serves the local dashboard', async () => {
+    const response = await request(server).get('/').expect(200);
+
+    expect(response.text).toContain('WinTidy Dashboard');
+    expect(response.text).toContain('Run Scan');
+    expect(response.text).toContain('Destructive cleanup is not implemented');
   });
 
   it('rejects cleanup without explicit confirmation', async () => {

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="WinTidy local maintenance dashboard"
+    />
+    <title>WinTidy Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/dashboard.js" defer></script>
+  </head>
+  <body>
+    <div class="page-glow" aria-hidden="true"></div>
+
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">W</span>
+          <div>
+            <p class="eyebrow">LOCAL WINDOWS MAINTENANCE</p>
+            <h1>WinTidy</h1>
+          </div>
+        </div>
+        <div class="connection" id="connectionStatus">
+          <span class="status-dot"></span>
+          <span id="connectionText">Connecting</span>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">SYSTEM OVERVIEW</p>
+          <h2>Maintenance visibility,<br /><span>without the guesswork.</span></h2>
+          <p>
+            Review local system health and estimate safe cleanup opportunities.
+            Dashboard actions are read-only.
+          </p>
+        </div>
+        <div class="hero-badge">
+          <span>MODE</span>
+          <strong>NON-DESTRUCTIVE</strong>
+        </div>
+      </section>
+
+      <section class="status-grid" aria-label="System status">
+        <article class="status-card">
+          <p>Disk usage</p>
+          <strong id="diskUsage">--</strong>
+          <span id="diskDetail">Waiting for system health</span>
+        </article>
+        <article class="status-card">
+          <p>Memory usage</p>
+          <strong id="memoryUsage">--</strong>
+          <span id="memoryDetail">Waiting for system health</span>
+        </article>
+        <article class="status-card">
+          <p>Last scan time</p>
+          <strong id="lastScan">Not run</strong>
+          <span>Current dashboard session</span>
+        </article>
+        <article class="status-card">
+          <p>Last cleanup time</p>
+          <strong>Not available</strong>
+          <span>Cleanup is not exposed here</span>
+        </article>
+        <article class="status-card">
+          <p>Items found</p>
+          <strong id="itemsFound">--</strong>
+          <span>Files in approved locations</span>
+        </article>
+        <article class="status-card featured">
+          <p>Estimated space recoverable</p>
+          <strong id="recoverableSpace">--</strong>
+          <span>Estimate only; nothing is removed</span>
+        </article>
+      </section>
+
+      <section class="action-panel">
+        <div>
+          <p class="eyebrow">SAFE ACTIONS</p>
+          <h2>Maintenance tools</h2>
+        </div>
+        <div class="actions">
+          <button class="button primary" id="runScan" type="button">
+            Run Scan
+          </button>
+          <button class="button" id="dryRun" type="button">
+            Dry Run Cleanup
+          </button>
+          <button class="button ghost" id="viewReport" type="button">
+            View Report
+          </button>
+        </div>
+      </section>
+
+      <div class="lower-grid">
+        <section class="panel" id="reportPanel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">SESSION LOG</p>
+              <h2>Recent Activity</h2>
+            </div>
+            <span class="activity-count" id="activityCount">0 events</span>
+          </div>
+          <ol class="activity-list" id="activityList">
+            <li class="empty-state">No dashboard activity yet.</li>
+          </ol>
+        </section>
+
+        <aside class="panel safety-panel">
+          <p class="eyebrow">GUARDRAILS</p>
+          <h2>Safety Notes</h2>
+          <ul>
+            <li>Dashboard scans and dry runs never delete files.</li>
+            <li>Only internally approved temp and browser cache folders are inspected.</li>
+            <li>Destructive cleanup is not implemented in this dashboard.</li>
+            <li>Review every report before taking maintenance action elsewhere.</li>
+          </ul>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

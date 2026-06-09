@@ -46,6 +46,14 @@ PORT=3000
 HOST=127.0.0.1
 ```
 
+## Dashboard
+
+WinTidy includes a small optional local dashboard at
+`http://127.0.0.1:3000/`. It shows system health and session-level cleanup
+estimates with a dark crimson interface. **Run Scan** and **Dry Run Cleanup**
+use only the read-only scan and preview endpoints; the dashboard never invokes
+the destructive cleanup endpoint.
+
 ## API
 
 ### `GET /api/v1/system/health`
