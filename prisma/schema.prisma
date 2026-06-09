@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model MaintenanceRun {
+  id                   Int              @id @default(autoincrement())
+  startedAt            DateTime         @default(now())
+  completedAt          DateTime?
+  status               String
+  requestedCategories Json
+  confirmationReceived Boolean          @default(false)
+  filesDeleted         Int              @default(0)
+  bytesFreed           BigInt           @default(0)
+  skippedFiles         Int              @default(0)
+  errorCount           Int              @default(0)
+  errors               Json?
+  findings             CleanupFinding[]
+
+  @@index([startedAt])
+  @@index([status])
+}
+
+model CleanupFinding {
+  id               Int             @id @default(autoincrement())
+  category         String
+  path             String
+  fileCount        Int
+  totalBytes       BigInt
+  discoveredAt     DateTime        @default(now())
+  maintenanceRunId Int?
+  maintenanceRun   MaintenanceRun? @relation(fields: [maintenanceRunId], references: [id], onDelete: SetNull)
+
+  @@index([category])
+  @@index([discoveredAt])
+  @@index([maintenanceRunId])
+}
+
+model StartupEntry {
+  id           Int      @id @default(autoincrement())
+  name         String
+  command      String
+  source       String
+  location     String
+  enabled      Boolean?
+  discoveredAt DateTime @default(now())
+  lastSeenAt   DateTime @updatedAt
+
+  @@unique([source, location, name])
+  @@index([source])
+}

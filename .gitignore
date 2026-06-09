@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+.env
+prisma/*.db
+prisma/*.db-journal
+*.log
+.eslintcache
