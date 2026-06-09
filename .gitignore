@@ -7,3 +7,5 @@ prisma/*.db-journal
 *.log
 .eslintcache
 .snapshots/
+.wintidy.pid
+data/

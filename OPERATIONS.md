@@ -94,3 +94,18 @@ npm run start:prod
 ```
 
 Keep `HOST=127.0.0.1` unless a separate authenticated gateway protects the API.
+
+## Targeted Registry Maintenance
+
+Registry maintenance is limited to common user and machine startup `Run` keys.
+Start with the read-only scan:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:3000/api/v1/registry/scan
+```
+
+Preview exact values before removal. Confirmed removal requires
+`confirm = $true`, creates an exact `.reg` backup under
+`data/registry-backups`, and records the run in SQLite. Do not submit ambiguous
+entries, and inspect the preview response before confirming. Machine-level
+entries can require an elevated WinTidy process.

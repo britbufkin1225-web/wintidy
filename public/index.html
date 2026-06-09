@@ -89,6 +89,9 @@
           <button class="button" id="dryRun" type="button">
             Dry Run Cleanup
           </button>
+          <button class="button" id="scanRegistry" type="button">
+            Scan Startup Registry
+          </button>
           <button class="button ghost" id="viewReport" type="button">
             View Report
           </button>
@@ -115,7 +118,8 @@
           <ul>
             <li>Dashboard scans and dry runs never delete files.</li>
             <li>Only internally approved temp and browser cache folders are inspected.</li>
-            <li>Destructive cleanup is not implemented in this dashboard.</li>
+            <li>Registry scanning in this dashboard is read-only.</li>
+            <li>Confirmed registry removal is available only through the API.</li>
             <li>Review every report before taking maintenance action elsewhere.</li>
           </ul>
         </aside>

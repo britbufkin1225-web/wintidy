@@ -3,6 +3,7 @@ import { PrismaModule } from './database/prisma.module';
 import { CleanupModule } from './modules/cleanup/cleanup.module';
 import { FilesModule } from './modules/files/files.module';
 import { ProcessesModule } from './modules/processes/processes.module';
+import { RegistryModule } from './modules/registry/registry.module';
 import { StartupModule } from './modules/startup/startup.module';
 import { SystemModule } from './modules/system/system.module';
 
@@ -14,6 +15,7 @@ import { SystemModule } from './modules/system/system.module';
     FilesModule,
     StartupModule,
     ProcessesModule,
+    RegistryModule,
   ],
 })
 export class AppModule {}

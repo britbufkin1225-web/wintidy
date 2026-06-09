@@ -61,7 +61,9 @@ describe('WinTidy API (e2e)', () => {
 
     expect(response.text).toContain('WinTidy Dashboard');
     expect(response.text).toContain('Run Scan');
-    expect(response.text).toContain('Destructive cleanup is not implemented');
+    expect(response.text).toContain(
+      'Confirmed registry removal is available only through the API',
+    );
   });
 
   it('rejects cleanup without explicit confirmation', async () => {
@@ -79,6 +81,35 @@ describe('WinTidy API (e2e)', () => {
       .post('/api/v1/cleanup/preview')
       .send({
         categories: ['downloads'],
+      })
+      .expect(400);
+  });
+
+  it('rejects registry removal without explicit confirmation', async () => {
+    await request(server)
+      .post('/api/v1/registry/run')
+      .send({
+        targets: [
+          {
+            key: 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run',
+            valueName: 'Missing App',
+          },
+        ],
+        confirm: false,
+      })
+      .expect(400);
+  });
+
+  it('rejects registry keys outside the fixed allowlist', async () => {
+    await request(server)
+      .post('/api/v1/registry/preview')
+      .send({
+        targets: [
+          {
+            key: 'HKCU\\Software\\Example',
+            valueName: 'Example',
+          },
+        ],
       })
       .expect(400);
   });

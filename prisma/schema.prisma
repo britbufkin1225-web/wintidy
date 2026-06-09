@@ -53,3 +53,20 @@ model StartupEntry {
   @@unique([source, location, name])
   @@index([source])
 }
+
+model RegistryMaintenanceRun {
+  id                   Int      @id @default(autoincrement())
+  startedAt            DateTime @default(now())
+  completedAt          DateTime?
+  status               String
+  requestedTargets     Json
+  confirmationReceived Boolean  @default(false)
+  entriesRemoved       Int      @default(0)
+  skippedEntries       Int      @default(0)
+  errorCount           Int      @default(0)
+  backupPaths          Json?
+  results              Json?
+
+  @@index([startedAt])
+  @@index([status])
+}

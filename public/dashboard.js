@@ -13,6 +13,7 @@ const elements = {
   recoverableSpace: document.querySelector("#recoverableSpace"),
   runScan: document.querySelector("#runScan"),
   dryRun: document.querySelector("#dryRun"),
+  scanRegistry: document.querySelector("#scanRegistry"),
   viewReport: document.querySelector("#viewReport"),
   reportPanel: document.querySelector("#reportPanel"),
   activityList: document.querySelector("#activityList"),
@@ -138,6 +139,16 @@ elements.dryRun.addEventListener("click", () =>
     addActivity(
       "Dry run completed",
       `${formatBytes(result.totalBytes)} estimated; no files were removed.`,
+    );
+  }),
+);
+
+elements.scanRegistry.addEventListener("click", () =>
+  runReadOnlyAction(elements.scanRegistry, async () => {
+    const result = await requestJson("/api/v1/registry/scan");
+    addActivity(
+      "Startup registry scan completed",
+      `${result.orphanedCount} orphaned and ${result.ambiguousCount} ambiguous entries found; nothing was changed.`,
     );
   }),
 );

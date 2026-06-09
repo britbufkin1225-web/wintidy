@@ -16,6 +16,7 @@ every cleanup attempt is audited in SQLite.
 - Confirmed cleanup with partial-failure reporting and audit logs
 - Duplicate detection using file-size grouping before SHA-256 hashing
 - Read-only Windows Startup folder and registry inventory
+- Targeted orphaned startup registry maintenance with exact-value backups
 - Running processes sorted by working-set memory
 - Strict request validation and normalized error responses
 - Local-only binding by default
@@ -52,7 +53,7 @@ WinTidy includes a small optional local dashboard at
 `http://127.0.0.1:3000/`. It shows system health and session-level cleanup
 estimates with a dark crimson interface. **Run Scan** and **Dry Run Cleanup**
 use only the read-only scan and preview endpoints; the dashboard never invokes
-the destructive cleanup endpoint.
+the destructive cleanup or registry removal endpoints.
 
 ## API
 
@@ -124,6 +125,36 @@ registry keys. Entries are observed and stored in `StartupEntry`; no registry
 or Startup folder values are changed. `enabled` is `null` because WinTidy does
 not currently interpret Windows `StartupApproved` state.
 
+### `GET /api/v1/registry/scan`
+
+Reads only the three approved Windows startup `Run` keys. An entry is marked
+`orphaned` only when WinTidy can confidently extract an absolute executable
+path and verify that it does not exist. PATH commands, shell URIs, relative
+commands, and ambiguous command lines are never removal candidates.
+
+### `POST /api/v1/registry/preview`
+
+Re-queries and previews exact startup values without changing the registry:
+
+```json
+{
+  "targets": [
+    {
+      "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "valueName": "Missing App"
+    }
+  ]
+}
+```
+
+### `POST /api/v1/registry/run`
+
+Requires the same exact targets plus `"confirm": true`. Each value is
+re-queried and must still be orphaned. WinTidy writes an exact `.reg` backup to
+`data/registry-backups/` before deleting only the named value. Every attempt is
+recorded in `RegistryMaintenanceRun`. Machine-level keys may require an
+administrator session; permission failures are reported and audited.
+
 ### `GET /api/v1/processes`
 
 Returns running Windows processes sorted by working-set memory. This endpoint
@@ -134,6 +165,7 @@ uses a fixed PowerShell command and accepts no command input.
 - `MaintenanceRun`: every confirmed cleanup attempt, including partial failure
 - `CleanupFinding`: category-level scan summaries
 - `StartupEntry`: normalized startup entries and last-seen timestamps
+- `RegistryMaintenanceRun`: confirmed registry attempts, backups, and outcomes
 
 ## Safety Guarantees
 
@@ -146,6 +178,8 @@ uses a fixed PowerShell command and accepts no command input.
 - Cleanup deletes files only; it does not remove directories.
 - Duplicate, startup, process, and health endpoints are read-only.
 - Filesystem access failures are reported instead of bypassed.
+- Registry keys are fixed by the application; arbitrary keys are rejected.
+- Registry values are revalidated and backed up immediately before removal.
 
 ## Validation
 
